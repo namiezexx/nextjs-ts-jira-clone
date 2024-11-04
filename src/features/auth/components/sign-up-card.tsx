@@ -21,17 +21,16 @@ import {
     FormItem,
     FormMessage,
 } from "@/components/ui/form"
-import Link from "next/link"
 
-const formSchema = z.object({
-    name: z.string().trim().min(1, "이름을 1글자 이상 입력하세요"),
-    email: z.string().trim().min(1, "이메일은 필수 입력입니다.").email(),
-    password: z.string().min(8, "비밀번호는 최소 8글자 이상입니다.")
-})
+import Link from "next/link"
+import { registerSchema } from "../schemas";
+import { useRegister } from "../api/use-register"
 
 export const SignUpCard = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const { mutate } = useRegister();
+
+    const form = useForm<z.infer<typeof registerSchema>>({
+        resolver: zodResolver(registerSchema),
         defaultValues: {
             name: "",
             email: "",
@@ -39,8 +38,9 @@ export const SignUpCard = () => {
         },
     });
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const onSubmit = (values: z.infer<typeof registerSchema>) => {
         console.log({ values });
+        mutate(values)
     }
 
     return (
